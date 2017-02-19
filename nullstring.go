@@ -11,6 +11,15 @@ type (
 	}
 )
 
+func NewNullString(s string) NullString {
+	return NullString{
+		sql.NullString {
+			String: s,
+			Valid: (s != ""),
+		},
+	}
+}
+
 // NullString MarshalJSON interface redefinition
 func (r NullString) MarshalJSON() ([]byte, error) {
 	if r.Valid {
