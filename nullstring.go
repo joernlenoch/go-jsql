@@ -12,16 +12,16 @@ type (
 )
 
 func (s NullString) String() string {
-	return fmt.Sprintf("%v", s)
+	return string(s)
 }
 
 // NullString MarshalJSON interface redefinition
 func (s NullString) MarshalJSON() ([]byte, error) {
 
 	if s != "" {
-		return json.Marshal(s)
+		return json.Marshal(string(s))
 	} else {
-		return json.Marshal(nil)
+		return []byte("null"), nil
 	}
 }
 
@@ -62,5 +62,5 @@ func (s NullString) Value() (driver.Value, error) {
     return driver.Value(nil), nil
   }
 
-  return json.Marshal(s)
+  return json.Marshal(string(s))
 }
