@@ -19,8 +19,6 @@ func (s NullString) String() string {
 // NullString MarshalJSON interface redefinition
 func (s NullString) MarshalJSON() ([]byte, error) {
 
-  log.Print("MARSHAL", s)
-
 	if s != "" {
 		return json.Marshal(s)
 	} else {
@@ -29,8 +27,6 @@ func (s NullString) MarshalJSON() ([]byte, error) {
 }
 
 func (s *NullString) UnmarshalJSON(b []byte) error {
-
-  log.Print("UNMARSHAL", b)
 
 	*s = ""
 
@@ -62,8 +58,6 @@ func (s *NullString) Scan(src interface{}) error {
 }
 
 func (s NullString) Value() (driver.Value, error) {
-
-  log.Print("VALUE", s)
 
   if s == "" {
     return driver.Value(nil), nil
