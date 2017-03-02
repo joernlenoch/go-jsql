@@ -29,7 +29,7 @@ func (s *NullString) UnmarshalJSON(b []byte) error {
 
 	*s = ""
 
-	if len(b) >= 0 && string(b) != "null" {
+	if len(b) >= 0 {
 
 		if err := json.Unmarshal(b, &s); err != nil {
 			return err
@@ -51,7 +51,7 @@ func (s *NullString) Scan(src interface{}) error {
     return errors.New(fmt.Sprintf("The given data is not a valid string. (%#v)", src))
   }
 
-  *s = NullString(data)
+  *s = NullString(string(data))
 
   return nil
 }
@@ -62,5 +62,5 @@ func (s NullString) Value() (driver.Value, error) {
     return driver.Value(nil), nil
   }
 
-  return json.Marshal(string(s))
+  return string(s), nil
 }
