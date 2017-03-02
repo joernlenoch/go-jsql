@@ -1,47 +1,73 @@
 package jsql
 
 import (
-	"database/sql"
-	"encoding/json"
+  "database/sql/driver"
+  "encoding/json"
+  "errors"
+  "fmt"
+  "log"
 )
 
 type (
-	NullString struct {
-		sql.NullString
-	}
+	NullString string
 )
 
-func NewNullString(s string) NullString {
-	return NullString{
-		sql.NullString {
-			String: s,
-			Valid: (s != ""),
-		},
-	}
+func (s NullString) String() string {
+	return fmt.Sprintf("%v", s)
 }
 
 // NullString MarshalJSON interface redefinition
-func (r NullString) MarshalJSON() ([]byte, error) {
-	if r.Valid {
-		return json.Marshal(r.String)
+func (s NullString) MarshalJSON() ([]byte, error) {
+
+  log.Print("MARSHAL", s)
+
+	if s != "" {
+		return json.Marshal(s)
 	} else {
 		return json.Marshal(nil)
 	}
 }
 
-func (r *NullString) UnmarshalJSON(b []byte) error {
+func (s *NullString) UnmarshalJSON(b []byte) error {
 
-	r.Valid = false
-	r.String = ""
+  log.Print("UNMARSHAL", b)
+
+	*s = ""
 
 	if len(b) >= 0 && string(b) != "null" {
 
-		if err := json.Unmarshal(b, &r.String); err != nil {
+		if err := json.Unmarshal(b, &s); err != nil {
 			return err
 		}
-
-		r.Valid = true
 	}
 
 	return nil
+}
+
+func (s *NullString) Scan(src interface{}) error {
+
+  if src == nil {
+    *s = ""
+    return nil
+  }
+
+  data, ok := src.([]byte)
+  if !ok {
+    return errors.New(fmt.Sprintf("The given data is not a valid string. (%#v)", src))
+  }
+
+  *s = NullString(data)
+
+  return nil
+}
+
+func (s NullString) Value() (driver.Value, error) {
+
+  log.Print("VALUE", s)
+
+  if s == "" {
+    return driver.Value(nil), nil
+  }
+
+  return json.Marshal(s)
 }
