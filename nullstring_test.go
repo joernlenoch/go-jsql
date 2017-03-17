@@ -3,26 +3,25 @@ package jsql_test
 import (
   "testing"
   "github.com/j-lenoch/jsql"
+  "encoding/json"
 )
 
 
 func TestNullString_UnmarshalJSON(t *testing.T) {
 
   s := jsql.NullString{}
-  s.UnmarshalJSON([]byte("null"))
 
+  json.Unmarshal([]byte("null"), &s)
   if s.Valid || s.String != "" {
     t.Fatal("null is not correctly unmarshalled", s)
   }
 
-  s.UnmarshalJSON([]byte(`"null"`))
-
+  json.Unmarshal([]byte(`"null"`), &s)
   if !s.Valid || s.String != "null" {
     t.Fatal("string 'null' is not correctly unmarshalled")
   }
 
-  s.UnmarshalJSON([]byte(`"漢字"`))
-
+  json.Unmarshal([]byte(`"漢字"`), &s)
   if !s.Valid || s.String != "漢字" {
     t.Fatal("'kanji' is not correctly unmarshalled")
   }

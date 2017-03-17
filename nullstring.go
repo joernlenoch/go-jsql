@@ -6,12 +6,17 @@ import (
   "errors"
   "fmt"
   "bytes"
+  "database/sql"
 )
 
 type (
   // Basically a clone of the sql.NullString, but with
   // additional functionality like JSON marshalling.
 	NullString struct {
+    sql.Scanner
+    json.Marshaler
+    json.Unmarshaler
+
     String string
     Valid bool
   }
