@@ -10,16 +10,10 @@ import (
 )
 
 type (
+
   // Basically a clone of the sql.NullString, but with
   // additional functionality like JSON marshalling.
-	NullString struct {
-    sql.Scanner
-    json.Marshaler
-    json.Unmarshaler
-
-    String string
-    Valid bool
-  }
+	NullString sql.NullString
 )
 
 // NullString MarshalJSON interface redefinition
@@ -56,8 +50,7 @@ func (s *NullString) UnmarshalJSON(b []byte) error {
 func (s *NullString) Scan(src interface{}) error {
 
   if src == nil {
-    s.String = ""
-    s.Valid = false
+    s.String, s.Valid = "", false
     return nil
   }
 
@@ -76,10 +69,8 @@ func (s *NullString) Scan(src interface{}) error {
 }
 
 func (s NullString) Value() (driver.Value, error) {
-
   if !s.Valid {
     return driver.Value(nil), nil
   }
-
   return s.String, nil
 }

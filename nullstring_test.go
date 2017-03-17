@@ -26,6 +26,30 @@ func TestNullString_UnmarshalJSON(t *testing.T) {
     t.Fatal("'kanji' is not correctly unmarshalled")
   }
 
+  var nested struct {
+    Something jsql.NullString `json:"something"`
+  }
+
+  // Possitive testing nested unmarshalling
+  err := json.Unmarshal([]byte(`{ "something": "val" }`), &nested)
+  if err != nil {
+    t.Fatal(err)
+  }
+
+  if nested.Something.Valid == false || nested.Something.String != "val" {
+    t.Fatal("The nested unmarshalling did not work.", nested)
+  }
+
+  // Trying to unmarshal an nested nil value
+  err = json.Unmarshal([]byte(`{ "something": null }`), &nested)
+  if err != nil {
+    t.Fatal(err)
+  }
+
+  if nested.Something.Valid != false || nested.Something.String != "" {
+    t.Fatal("The nested unmarshalling did not work.", nested)
+  }
+
 }
 
 func TestNullString_MarshalJSON_Valid(t *testing.T) {
