@@ -5,35 +5,44 @@ import (
   "encoding/json"
   "errors"
   "fmt"
+  "bytes"
 )
 
 type (
-	NullString string
+  // Basically a clone of the sql.NullString, but with
+  // additional functionality like JSON marshalling.
+	NullString struct {
+    String string
+    Valid bool
+  }
 )
-
-func (s NullString) String() string {
-	return string(s)
-}
 
 // NullString MarshalJSON interface redefinition
 func (s NullString) MarshalJSON() ([]byte, error) {
 
-	if s != "" {
-		return json.Marshal(string(s))
-	} else {
-		return []byte("null"), nil
-	}
+  if !s.Valid {
+    return []byte("null"), nil
+  }
+
+  return json.Marshal(s.String)
 }
 
 func (s *NullString) UnmarshalJSON(b []byte) error {
 
-	*s = ""
+	s.String = ""
+  s.Valid = false
+
+  if bytes.Equal(b, []byte("null")) {
+    return nil
+  }
 
 	if len(b) >= 0 {
 
-		if err := json.Unmarshal(b, &s); err != nil {
+		if err := json.Unmarshal(b, &s.String); err != nil {
 			return err
 		}
+
+    s.Valid = true
 	}
 
 	return nil
@@ -42,25 +51,30 @@ func (s *NullString) UnmarshalJSON(b []byte) error {
 func (s *NullString) Scan(src interface{}) error {
 
   if src == nil {
-    *s = ""
+    s.String = ""
+    s.Valid = false
     return nil
   }
 
-  data, ok := src.([]byte)
-  if !ok {
-    return errors.New(fmt.Sprintf("The given data is not a valid string. (%#v)", src))
+  switch src.(type) {
+  case []byte:
+    s.String = string(src.([]byte))
+    s.Valid = true
+  case string:
+    s.String = src.(string)
+    s.Valid = true
+  default:
+    return errors.New(fmt.Sprintf("The given data is not a valid []byte. (%#v)", src))
   }
-
-  *s = NullString(string(data))
 
   return nil
 }
 
 func (s NullString) Value() (driver.Value, error) {
 
-  if s == "" {
+  if !s.Valid {
     return driver.Value(nil), nil
   }
 
-  return string(s), nil
+  return s.String, nil
 }
