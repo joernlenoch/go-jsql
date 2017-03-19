@@ -37,8 +37,10 @@ func (s *NullString) UnmarshalJSON(b []byte) error {
 
 	if len(b) >= 0 {
 
+    // Try to extract the 'string'. If this failed we simply
+    // use the base value as string.
 		if err := json.Unmarshal(b, &s.String); err != nil {
-			return err
+      s.String = string(b)
 		}
 
     s.Valid = true
