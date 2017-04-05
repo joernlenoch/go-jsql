@@ -1,12 +1,12 @@
 package jsql
 
 import (
+  "bytes"
+  "database/sql"
   "database/sql/driver"
   "encoding/json"
   "errors"
   "fmt"
-  "bytes"
-  "database/sql"
 )
 
 type (
