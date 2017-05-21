@@ -1,13 +1,14 @@
 package jsql
 
 import (
-  "github.com/go-sql-driver/mysql"
-  "encoding/json"
   "bytes"
-  "time"
   "database/sql/driver"
-  "github.com/juju/errors"
+  "encoding/json"
   "fmt"
+  "time"
+
+  "github.com/go-sql-driver/mysql"
+  "github.com/juju/errors"
 )
 
 type NullTime mysql.NullTime

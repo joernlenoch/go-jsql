@@ -2,7 +2,6 @@ package jsql
 
 import (
   "bytes"
-  "database/sql"
   "database/sql/driver"
   "encoding/json"
   "errors"
@@ -13,8 +12,18 @@ type (
 
   // Basically a clone of the sql.NullString, but with
   // additional functionality like JSON marshalling.
-	NullString sql.NullString
+	NullString struct {
+    String string
+    Valid bool
+  }
 )
+
+func NewNullString(s interface{}) NullString {
+  return NullString{
+    String: fmt.Sprint(s),
+    Valid: s != nil,
+  }
+}
 
 // NullString MarshalJSON interface redefinition
 func (s NullString) MarshalJSON() ([]byte, error) {
