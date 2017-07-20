@@ -2,9 +2,8 @@ package jsql
 
 import (
 	"bytes"
-	"database/sql/driver"
+	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 )
 
@@ -13,15 +12,16 @@ type (
 	// Basically a clone of the sql.NullString, but with
 	// additional functionality like JSON marshalling.
 	NullString struct {
-		String string
-		Valid  bool
+		sql.NullString
 	}
 )
 
 func NewNullString(s interface{}) NullString {
 	return NullString{
-		String: fmt.Sprint(s),
-		Valid:  s != nil,
+		NullString: sql.NullString{
+			String: fmt.Sprint(s),
+			Valid:  s != nil,
+		},
 	}
 }
 
@@ -56,32 +56,4 @@ func (s *NullString) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
-}
-
-func (s *NullString) Scan(src interface{}) error {
-
-	if src == nil {
-		s.String, s.Valid = "", false
-		return nil
-	}
-
-	switch src.(type) {
-	case []byte:
-		s.String = string(src.([]byte))
-		s.Valid = true
-	case string:
-		s.String = src.(string)
-		s.Valid = true
-	default:
-		return errors.New(fmt.Sprintf("The given data is not a valid []byte. (%#v)", src))
-	}
-
-	return nil
-}
-
-func (s NullString) Value() (driver.Value, error) {
-	if !s.Valid {
-		return driver.Value(nil), nil
-	}
-	return s.String, nil
 }

@@ -2,16 +2,32 @@ package jsql
 
 import (
 	"bytes"
-	"database/sql/driver"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/juju/errors"
 )
 
-type NullTime mysql.NullTime
+type NullTime struct {
+	mysql.NullTime
+}
+
+func NewNullTime(s interface{}) NullTime {
+	if val, ok := s.(time.Time); ok {
+		return NullTime{
+			NullTime: mysql.NullTime{
+				Valid: true,
+				Time:  val,
+			},
+		}
+	}
+
+	return NullTime{
+		NullTime: mysql.NullTime{
+			Valid: false,
+		},
+	}
+}
 
 func (nt NullTime) MarshalJSON() ([]byte, error) {
 
@@ -43,28 +59,4 @@ func (nt *NullTime) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
-}
-
-// Scan implements the Scanner interface.
-// The value type must be time.Time or string / []byte (formatted time-string),
-// otherwise Scan fails.
-func (nt *NullTime) Scan(value interface{}) (err error) {
-
-	// TODO Fix me - for some reason nested methods are not found.
-	// This should work for now...
-	f := mysql.NullTime{}
-	if err := f.Scan(value); err != nil {
-		return errors.New(fmt.Sprintf("Unable to parse time value: %s", err.Error()))
-	}
-
-	nt.Valid, nt.Time = f.Valid, f.Time
-	return nil
-}
-
-// Value implements the driver Valuer interface.
-func (nt NullTime) Value() (driver.Value, error) {
-	if !nt.Valid {
-		return nil, nil
-	}
-	return nt.Time, nil
 }

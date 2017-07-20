@@ -11,7 +11,26 @@ import (
 	"github.com/kataras/go-errors"
 )
 
-type NullInt64 sql.NullInt64
+type NullInt64 struct {
+	sql.NullInt64
+}
+
+func NewNullInt64(s interface{}) NullInt64 {
+	if val, ok := s.(int64); ok {
+		return NullInt64{
+			sql.NullInt64{
+				Valid: true,
+				Int64: val,
+			},
+		}
+	}
+
+	return NullInt64{
+		sql.NullInt64{
+			Valid: false,
+		},
+	}
+}
 
 func (nt NullInt64) MarshalJSON() ([]byte, error) {
 
