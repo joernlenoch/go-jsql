@@ -3,9 +3,9 @@ package jsql
 import (
 	"bytes"
 	"encoding/json"
-	"time"
-
 	"github.com/go-sql-driver/mysql"
+	"log"
+	"time"
 )
 
 type NullTime struct {
@@ -27,6 +27,55 @@ func NewNullTime(s interface{}) NullTime {
 			Valid: false,
 		},
 	}
+}
+
+func (nt NullTime) IsExpired() bool {
+	if !nt.Valid {
+		return false
+	}
+
+	return time.Now().After(nt.Time)
+}
+
+func (nt NullTime) Before(t interface{}) bool {
+	if !nt.Valid {
+		return false
+	}
+
+	if ntt, ok := t.(time.Time); ok {
+		return nt.Time.Before(ntt)
+	}
+
+	if ntt, ok := t.(NullTime); ok {
+		if !ntt.Valid {
+			return true
+		}
+
+		return nt.Time.Before(ntt.Time)
+	}
+
+	log.Print("[Warning] The given time is not a valid time")
+	return false
+}
+
+func (nt NullTime) After(t interface{}) bool {
+	if !nt.Valid {
+		return false
+	}
+
+	if ntt, ok := t.(time.Time); ok {
+		return nt.Time.After(ntt)
+	}
+
+	if ntt, ok := t.(NullTime); ok {
+		if !ntt.Valid {
+			return true
+		}
+		return nt.Time.After(ntt.Time)
+	}
+
+	log.Print("[Warning] The given time is not a valid time")
+	return false
 }
 
 func (nt NullTime) MarshalJSON() ([]byte, error) {
