@@ -20,6 +20,15 @@ func NewNullBool(i interface{}) NullBool {
 // Create a new NullFloat.
 // - nil and numeric values are considered correct
 func TryNullBool(i interface{}) (NullBool, error) {
+
+  if i == nil {
+    return NullBool{
+      sql.NullBool{
+        Valid:   false,
+      },
+    }, nil
+  }
+
   var val bool
   var err error
 

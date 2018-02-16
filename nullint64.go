@@ -24,6 +24,14 @@ func NewNullInt64(s interface{}) NullInt64 {
 // - nil and numeric values are considered correct
 func TryNullInt64(i interface{}) (NullInt64, error) {
 
+  if i == nil {
+    return NullInt64{
+      sql.NullInt64{
+        Valid:   false,
+      },
+    }, nil
+  }
+
   var val int64
   var err error
 

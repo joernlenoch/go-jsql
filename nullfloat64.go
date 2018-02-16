@@ -23,6 +23,14 @@ func NewNullFloat64(i interface{}) NullFloat64 {
 // - nil and numeric values are considered correct
 func TryNullFloat64(i interface{}) (NullFloat64, error) {
 
+  if i == nil {
+    return NullFloat64{
+      sql.NullFloat64{
+        Valid:   false,
+      },
+    }, nil
+  }
+
   var val float64
   var err error
 
