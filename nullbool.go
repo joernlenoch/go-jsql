@@ -4,28 +4,54 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+  "strconv"
+  "fmt"
 )
 
 type NullBool struct {
 	sql.NullBool
 }
 
-func NewNullBool(b interface{}) NullBool {
+func NewNullBool(i interface{}) NullBool {
+  n, _ := TryNullBool(i)
+  return n
+}
 
-	if val, ok := b.(bool); ok {
-		return NullBool{
-			sql.NullBool{
-				Bool:  val,
-				Valid: true,
-			},
-		}
-	}
+// Create a new NullFloat.
+// - nil and numeric values are considered correct
+func TryNullBool(i interface{}) (NullBool, error) {
+  var val bool
+  var err error
 
-	return NullBool{
-		sql.NullBool{
-			Valid: false,
-		},
-	}
+  switch i.(type) {
+  case bool:
+    val = i.(bool)
+  default:
+    val, err = strconv.ParseBool(fmt.Sprint(i))
+  }
+
+  if err != nil {
+    return NullBool{
+      sql.NullBool{
+        Valid: false,
+      },
+    }, err
+  }
+
+  return NullBool{
+    sql.NullBool{
+      Valid:   true,
+      Bool: val,
+    },
+  }, nil
+}
+
+func (nt NullBool) ToValue() interface{} {
+  if !nt.Valid {
+    return nil
+  }
+
+  return nt.Bool
 }
 
 func (nb NullBool) MarshalJSON() ([]byte, error) {

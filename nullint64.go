@@ -16,20 +16,68 @@ type NullInt64 struct {
 }
 
 func NewNullInt64(s interface{}) NullInt64 {
-	if val, ok := s.(int64); ok {
-		return NullInt64{
-			sql.NullInt64{
-				Valid: true,
-				Int64: val,
-			},
-		}
-	}
+	n, _ := TryNullInt64(s)
+	return n
+}
 
-	return NullInt64{
-		sql.NullInt64{
-			Valid: false,
-		},
-	}
+// Create a new NullFloat.
+// - nil and numeric values are considered correct
+func TryNullInt64(i interface{}) (NullInt64, error) {
+
+  var val int64
+  var err error
+
+  switch i.(type) {
+  case int:
+    val = int64(i.(int))
+  case int8:
+    val = int64(i.(int8))
+  case int16:
+    val = int64(i.(int16))
+  case int32:
+    val = int64(i.(int32))
+  case int64:
+    val = i.(int64)
+  case uint:
+    val = int64(i.(uint))
+  case uint8:
+    val = int64(i.(uint8))
+  case uint16:
+    val = int64(i.(uint16))
+  case uint32:
+    val = int64(i.(uint32))
+  case uint64:
+    val = int64(i.(uint64))
+  case float32:
+    val = int64(i.(uint32))
+  case float64:
+    val = int64(i.(uint64))
+  default:
+    val, err = strconv.ParseInt(fmt.Sprint(i), 10, 64)
+  }
+
+  if err != nil {
+    return NullInt64{
+      sql.NullInt64{
+        Valid: false,
+      },
+    }, err
+  }
+
+  return NullInt64{
+    sql.NullInt64{
+      Valid:   true,
+      Int64: val,
+    },
+  }, nil
+}
+
+func (nt NullInt64) ToValue() interface{} {
+  if !nt.Valid {
+    return nil
+  }
+
+  return nt.Int64
 }
 
 func (nt NullInt64) MarshalJSON() ([]byte, error) {
