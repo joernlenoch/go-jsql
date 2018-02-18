@@ -57,9 +57,9 @@ func TryNullInt64(i interface{}) (NullInt64, error) {
   case uint64:
     val = int64(i.(uint64))
   case float32:
-    val = int64(i.(uint32))
+    val = int64(i.(float32))
   case float64:
-    val = int64(i.(uint64))
+    val = int64(i.(float64))
   default:
     val, err = strconv.ParseInt(fmt.Sprint(i), 10, 64)
   }
