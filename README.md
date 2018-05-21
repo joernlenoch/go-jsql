@@ -1,14 +1,20 @@
 
-*JSQL*
+## JSQL (Json Sql)
 
-Version 0.0.1
+Version 0.7.0
 
-*Overview*
+## Note
 
-_Warning:_ As this is a rather new repository, quite a few elements are missing or poorly implement. Please consider coming back at a later stage or add the missing classes yourself.
+In production use with 3 of my larger projects. Seems to work very reliable so far. -len
 
-*TODO*
+## Types
 
-* Add all types
-* Implement tests
-* Add automatic testing
+TBD
+
+## Testing
+
+TBD
+
+## Dependencies
+
+TBD

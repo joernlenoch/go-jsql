@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-  "github.com/joernlenoch/jsql"
+	"github.com/joernlenoch/go-jsql"
 )
 
 func TestNullString_UnmarshalJSON(t *testing.T) {
