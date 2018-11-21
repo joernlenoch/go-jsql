@@ -12,21 +12,19 @@ type NullTime struct {
 	mysql.NullTime
 }
 
-func NewNullTime(s interface{}) NullTime {
-	if val, ok := s.(time.Time); ok {
-		return NullTime{
-			NullTime: mysql.NullTime{
-				Valid: true,
-				Time:  val,
-			},
-		}
+func NewNullTime(i interface{}) *NullTime {
+	nt := &NullTime{}
+	nt.Set(i)
+	return nt
+}
+
+func (nt *NullTime) Set(i interface{}) {
+	if val, ok := i.(time.Time); ok {
+		nt.Valid = true
+		nt.Time = val
 	}
 
-	return NullTime{
-		NullTime: mysql.NullTime{
-			Valid: false,
-		},
-	}
+	nt.Valid = false
 }
 
 func (nt NullTime) IsExpired() bool {

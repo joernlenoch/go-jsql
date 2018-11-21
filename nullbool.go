@@ -4,63 +4,59 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-  "strconv"
-  "fmt"
+	"fmt"
+	"strconv"
 )
 
 type NullBool struct {
 	sql.NullBool
 }
 
-func NewNullBool(i interface{}) NullBool {
-  n, _ := TryNullBool(i)
-  return n
+func NewNullBool(i interface{}) *NullBool {
+	n, _ := TryNullBool(i)
+	return n
 }
 
 // Create a new NullFloat.
 // - nil and numeric values are considered correct
-func TryNullBool(i interface{}) (NullBool, error) {
-
-  if i == nil {
-    return NullBool{
-      sql.NullBool{
-        Valid:   false,
-      },
-    }, nil
-  }
-
-  var val bool
-  var err error
-
-  switch i.(type) {
-  case bool:
-    val = i.(bool)
-  default:
-    val, err = strconv.ParseBool(fmt.Sprint(i))
-  }
-
-  if err != nil {
-    return NullBool{
-      sql.NullBool{
-        Valid: false,
-      },
-    }, err
-  }
-
-  return NullBool{
-    sql.NullBool{
-      Valid:   true,
-      Bool: val,
-    },
-  }, nil
+func TryNullBool(i interface{}) (*NullBool, error) {
+	nb := &NullBool{}
+	return nb, nb.TrySet(i)
 }
 
-func (nt NullBool) ToValue() interface{} {
-  if !nt.Valid {
-    return nil
-  }
+func (nb *NullBool) TrySet(i interface{}) error {
 
-  return nt.Bool
+	if i == nil {
+		nb.Valid = false
+		return nil
+	}
+
+	var val bool
+	var err error
+
+	switch i.(type) {
+	case bool:
+		val = i.(bool)
+	default:
+		val, err = strconv.ParseBool(fmt.Sprint(i))
+	}
+
+	if err != nil {
+		nb.Valid = false
+		return err
+	}
+
+	nb.Valid = true
+	nb.Bool = val
+	return nil
+}
+
+func (nb NullBool) ToValue() interface{} {
+	if !nb.Valid {
+		return nil
+	}
+
+	return nb.Bool
 }
 
 func (nb NullBool) MarshalJSON() ([]byte, error) {

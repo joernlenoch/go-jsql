@@ -16,18 +16,27 @@ type NullArray struct {
 	Array []interface{}
 }
 
-func NewNullArray(b interface{}) NullArray {
+func NewNullArray(i interface{}) *NullArray {
+	na, _ := TryNewNullArray(i)
+	return na
+}
 
-	raw := reflect.ValueOf(b)
+func TryNewNullArray(i interface{}) (*NullArray, error) {
+	na := &NullArray{}
+	return na, na.TrySet(i)
+}
+
+func (na *NullArray) Set(i interface{}) {
+	na.TrySet(i)
+}
+
+func (na *NullArray) TrySet(i interface{}) error {
+
+	raw := reflect.ValueOf(i)
 
 	if raw.Kind() != reflect.Slice {
-
-		log.Fatal("Expected a slice, got a ", raw.Kind())
-
-		return NullArray{
-			Valid: false,
-			Array: nil,
-		}
+		na.Valid = false
+		return fmt.Errorf("expected a slice, got a %v", raw.Kind())
 	}
 
 	a := make([]interface{}, raw.Len())
@@ -35,10 +44,9 @@ func NewNullArray(b interface{}) NullArray {
 		a[i] = raw.Index(i).Interface()
 	}
 
-	return NullArray{
-		Array: a,
-		Valid: true,
-	}
+	na.Array = a
+	na.Valid = true
+	return nil
 }
 
 func (na NullArray) ToStringArray() []string {
