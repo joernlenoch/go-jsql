@@ -12,8 +12,8 @@ type NullTime struct {
 	mysql.NullTime
 }
 
-func NewNullTime(i interface{}) *NullTime {
-	nt := &NullTime{}
+func NewNullTime(i interface{}) NullTime {
+	nt := NullTime{}
 	nt.Set(i)
 	return nt
 }

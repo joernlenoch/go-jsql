@@ -12,14 +12,14 @@ type NullInt64 struct {
 	sql.NullInt64
 }
 
-func NewNullInt64(s interface{}) *NullInt64 {
+func NewNullInt64(s interface{}) NullInt64 {
 	n, _ := TryNullInt64(s)
 	return n
 }
 
 // TryNullInt64 tries to create a new object
-func TryNullInt64(i interface{}) (*NullInt64, error) {
-	ni := &NullInt64{}
+func TryNullInt64(i interface{}) (NullInt64, error) {
+	ni := NullInt64{}
 	return ni, ni.TrySet(i)
 }
 

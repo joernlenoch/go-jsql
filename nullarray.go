@@ -16,13 +16,13 @@ type NullArray struct {
 	Array []interface{}
 }
 
-func NewNullArray(i interface{}) *NullArray {
+func NewNullArray(i interface{}) NullArray {
 	na, _ := TryNewNullArray(i)
 	return na
 }
 
-func TryNewNullArray(i interface{}) (*NullArray, error) {
-	na := &NullArray{}
+func TryNewNullArray(i interface{}) (NullArray, error) {
+	na := NullArray{}
 	return na, na.TrySet(i)
 }
 

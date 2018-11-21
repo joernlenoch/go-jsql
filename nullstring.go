@@ -16,14 +16,14 @@ type NullString struct {
 }
 
 // NewNullString returns a new NullString and ignores any errors.
-func NewNullString(i interface{}) *NullString {
+func NewNullString(i interface{}) NullString {
 	n, _ := TryNullString(i)
 	return n
 }
 
 // NewTrimmedNullString returns a new NullString, but trims all spaces and invalidates
 // the object if string is empty.
-func NewTrimmedNullString(i interface{}) *NullString {
+func NewTrimmedNullString(i interface{}) NullString {
 	n, _ := TryNullString(i)
 
 	if n.Valid {
@@ -35,8 +35,8 @@ func NewTrimmedNullString(i interface{}) *NullString {
 }
 
 // TryNullString tries to create a new NullString
-func TryNullString(i interface{}) (*NullString, error) {
-	ns := &NullString{}
+func TryNullString(i interface{}) (NullString, error) {
+	ns := NullString{}
 	return ns, ns.TrySet(i)
 }
 

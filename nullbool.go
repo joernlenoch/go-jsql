@@ -12,15 +12,15 @@ type NullBool struct {
 	sql.NullBool
 }
 
-func NewNullBool(i interface{}) *NullBool {
+func NewNullBool(i interface{}) NullBool {
 	n, _ := TryNullBool(i)
 	return n
 }
 
 // Create a new NullFloat.
 // - nil and numeric values are considered correct
-func TryNullBool(i interface{}) (*NullBool, error) {
-	nb := &NullBool{}
+func TryNullBool(i interface{}) (NullBool, error) {
+	nb := NullBool{}
 	return nb, nb.TrySet(i)
 }
 

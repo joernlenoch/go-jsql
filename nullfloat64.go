@@ -14,15 +14,15 @@ type NullFloat64 struct {
 
 // Create a new NullFloat64 value.
 // Invalid values will result in having an invalid NullFloat64.
-func NewNullFloat64(i interface{}) *NullFloat64 {
+func NewNullFloat64(i interface{}) NullFloat64 {
 	nf, _ := TryNullFloat64(i)
 	return nf
 }
 
 // Create a new NullFloat.
 // - nil and numeric values are considered correct
-func TryNullFloat64(i interface{}) (*NullFloat64, error) {
-	nf := &NullFloat64{}
+func TryNullFloat64(i interface{}) (NullFloat64, error) {
+	nf := NullFloat64{}
 	return nf, nf.TrySet(i)
 }
 
