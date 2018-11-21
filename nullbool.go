@@ -35,6 +35,13 @@ func (nb *NullBool) TrySet(i interface{}) error {
 		return nil
 	}
 
+	// If the given data is a NullArray object, copy the data directly
+	if copy, ok := i.(*NullBool); ok {
+		nb.Valid = copy.Valid
+		nb.Bool = copy.Bool
+		return nil
+	}
+
 	var val bool
 	var err error
 

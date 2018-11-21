@@ -32,6 +32,18 @@ func (na *NullArray) Set(i interface{}) {
 
 func (na *NullArray) TrySet(i interface{}) error {
 
+	if i == nil {
+		na.Valid = false
+		return nil
+	}
+
+	// If the given data is a NullArray object, copy the data directly
+	if copy, ok := i.(*NullArray); ok {
+		na.Valid = copy.Valid
+		na.Array = copy.Array
+		return nil
+	}
+
 	raw := reflect.ValueOf(i)
 
 	if raw.Kind() != reflect.Slice {

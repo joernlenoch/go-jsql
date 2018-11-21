@@ -53,6 +53,13 @@ func (ns *NullString) TrySet(i interface{}) error {
 		return nil
 	}
 
+	// If the given data is a NullArray object, copy the data directly
+	if copy, ok := i.(*NullString); ok {
+		ns.Valid = copy.Valid
+		ns.String = copy.String
+		return nil
+	}
+
 	var val string
 	var err error
 

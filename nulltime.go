@@ -19,6 +19,19 @@ func NewNullTime(i interface{}) NullTime {
 }
 
 func (nt *NullTime) Set(i interface{}) {
+
+	if i == nil {
+		nt.Valid = false
+		return
+	}
+
+	// If the given data is a NullArray object, copy the data directly
+	if copy, ok := i.(*NullTime); ok {
+		nt.Valid = copy.Valid
+		nt.Time = copy.Time
+		return
+	}
+
 	if val, ok := i.(time.Time); ok {
 		nt.Valid = true
 		nt.Time = val

@@ -34,6 +34,13 @@ func (ni *NullInt64) TrySet(i interface{}) error {
 		return nil
 	}
 
+	// If the given data is a NullArray object, copy the data directly
+	if copy, ok := i.(*NullInt64); ok {
+		ni.Valid = copy.Valid
+		ni.Int64 = copy.Int64
+		return nil
+	}
+
 	var val int64
 	var err error
 

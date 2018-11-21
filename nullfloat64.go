@@ -37,6 +37,13 @@ func (nf *NullFloat64) TrySet(i interface{}) error {
 		return nil
 	}
 
+	// If the given data is a NullArray object, copy the data directly
+	if copy, ok := i.(*NullFloat64); ok {
+		nf.Valid = copy.Valid
+		nf.Float64 = copy.Float64
+		return nil
+	}
+
 	var val float64
 	var err error
 
