@@ -58,6 +58,10 @@ func (ns *NullString) TrySet(i interface{}) error {
 		ns.Valid = copy.Valid
 		ns.String = copy.String
 		return nil
+	} else if copy, ok := i.(NullString); ok {
+		ns.Valid = copy.Valid
+		ns.String = copy.String
+		return nil
 	}
 
 	var val string

@@ -40,6 +40,10 @@ func (nb *NullBool) TrySet(i interface{}) error {
 		nb.Valid = copy.Valid
 		nb.Bool = copy.Bool
 		return nil
+	} else if copy, ok := i.(NullBool); ok {
+		nb.Valid = copy.Valid
+		nb.Bool = copy.Bool
+		return nil
 	}
 
 	var val bool

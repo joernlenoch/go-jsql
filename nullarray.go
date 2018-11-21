@@ -42,6 +42,10 @@ func (na *NullArray) TrySet(i interface{}) error {
 		na.Valid = copy.Valid
 		na.Array = copy.Array
 		return nil
+	} else if copy, ok := i.(NullArray); ok {
+		na.Valid = copy.Valid
+		na.Array = copy.Array
+		return nil
 	}
 
 	raw := reflect.ValueOf(i)

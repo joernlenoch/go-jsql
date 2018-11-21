@@ -3,6 +3,7 @@ package jsql
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"log"
 	"time"
@@ -19,25 +20,38 @@ func NewNullTime(i interface{}) NullTime {
 }
 
 func (nt *NullTime) Set(i interface{}) {
+	nt.TrySet(i)
+}
 
+func (nt *NullTime) TrySet(i interface{}) error {
 	if i == nil {
 		nt.Valid = false
-		return
+		return nil
 	}
 
 	// If the given data is a NullArray object, copy the data directly
 	if copy, ok := i.(*NullTime); ok {
 		nt.Valid = copy.Valid
 		nt.Time = copy.Time
-		return
+		return nil
+	} else if copy, ok := i.(NullTime); ok {
+		nt.Valid = copy.Valid
+		nt.Time = copy.Time
+		return nil
 	}
 
-	if val, ok := i.(time.Time); ok {
+	if val, ok := i.(*time.Time); ok {
+		nt.Valid = true
+		nt.Time = *val
+		return nil
+	} else if val, ok := i.(time.Time); ok {
 		nt.Valid = true
 		nt.Time = val
+		return nil
 	}
 
 	nt.Valid = false
+	return fmt.Errorf("expected time value, got: %T", i)
 }
 
 func (nt NullTime) IsExpired() bool {

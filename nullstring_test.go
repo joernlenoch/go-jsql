@@ -2,6 +2,7 @@ package jsql_test
 
 import (
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/joernlenoch/go-jsql"
@@ -132,4 +133,22 @@ func TestNullString_Value(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+func TestNullString_TrySet(t *testing.T) {
+	ns2 := jsql.NullString{}
+
+	// Set a normal object
+	ns1 := jsql.NewNullString("test")
+
+	assert.NoError(t, ns2.TrySet(ns1))
+	assert.True(t, ns2.Valid)
+	assert.Equal(t, "test", ns2.String)
+
+	// Set an pointer to an object
+	ns1.Set("test_pointer")
+
+	assert.NoError(t, ns2.TrySet(&ns1))
+	assert.True(t, ns2.Valid)
+	assert.Equal(t, "test_pointer", ns2.String)
 }

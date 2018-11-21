@@ -42,6 +42,10 @@ func (nf *NullFloat64) TrySet(i interface{}) error {
 		nf.Valid = copy.Valid
 		nf.Float64 = copy.Float64
 		return nil
+	} else if copy, ok := i.(NullFloat64); ok {
+		nf.Valid = copy.Valid
+		nf.Float64 = copy.Float64
+		return nil
 	}
 
 	var val float64

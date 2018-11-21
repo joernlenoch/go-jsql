@@ -39,6 +39,10 @@ func (ni *NullInt64) TrySet(i interface{}) error {
 		ni.Valid = copy.Valid
 		ni.Int64 = copy.Int64
 		return nil
+	} else if copy, ok := i.(NullInt64); ok {
+		ni.Valid = copy.Valid
+		ni.Int64 = copy.Int64
+		return nil
 	}
 
 	var val int64
