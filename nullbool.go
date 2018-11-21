@@ -24,6 +24,10 @@ func TryNullBool(i interface{}) (*NullBool, error) {
 	return nb, nb.TrySet(i)
 }
 
+func (nb *NullBool) Set(i interface{}) {
+	nb.TrySet(i)
+}
+
 func (nb *NullBool) TrySet(i interface{}) error {
 
 	if i == nil {
