@@ -103,6 +103,15 @@ func (nt NullTime) After(t interface{}) bool {
 	return false
 }
 
+// ToValue transform the current value into nil or time.Time
+func (nt NullTime) ToValue() interface{} {
+	if !nt.Valid {
+		return nil
+	}
+
+	return nt.Time
+}
+
 func (nt NullTime) MarshalJSON() ([]byte, error) {
 
 	if !nt.Valid {

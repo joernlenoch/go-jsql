@@ -112,6 +112,15 @@ func (na NullArray) ToFloat64Array() ([]float64, error) {
 	return out, nil
 }
 
+// ToValue transform the current value into nil or array
+func (na NullArray) ToValue() interface{} {
+	if !na.Valid {
+		return nil
+	}
+
+	return na.Array
+}
+
 func (na NullArray) MarshalJSON() ([]byte, error) {
 	if !na.Valid {
 		return []byte("null"), nil
