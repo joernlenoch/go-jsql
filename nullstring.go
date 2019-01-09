@@ -93,7 +93,7 @@ func (ns NullString) IsTrimmed() bool {
 
 // IsEmpty checks whether this NullString contains any data
 func (ns NullString) IsEmpty() bool {
-	return ns.Valid && len(strings.TrimSpace(ns.String)) > 0
+	return !ns.Valid || len(strings.TrimSpace(ns.String)) == 0
 }
 
 // ToValue transform the current value into nil or string
