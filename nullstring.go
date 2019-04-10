@@ -15,6 +15,79 @@ type NullString struct {
 	sql.NullString
 }
 
+func (ns NullString) Add(nt2 NullString) NullString {
+
+	val1 := ""
+	if ns.Valid {
+		val1 = ns.String
+	}
+
+	val2 := ""
+	if nt2.Valid {
+		val2 = nt2.String
+	}
+
+	return NullString{
+		NullString: sql.NullString{
+			Valid:  ns.Valid || nt2.Valid,
+			String: val1 + val2,
+		},
+	}
+}
+
+// IsTrimmed returns whether the given string is trimmed. Returns true if the string is invalid
+func (ns NullString) IsTrimmed() bool {
+	return !ns.Valid || ns.String == strings.TrimSpace(ns.String)
+}
+
+// IsEmpty checks whether this NullString contains any data
+func (ns NullString) IsEmpty() bool {
+	return !ns.Valid || len(strings.TrimSpace(ns.String)) == 0
+}
+
+// ToValue transform the current value into nil or string
+func (ns NullString) ToValue() interface{} {
+	if !ns.Valid {
+		return nil
+	}
+
+	return ns.String
+}
+
+// MarshalJSON transforms the current string in either "null" or a byte representation of the string
+func (ns NullString) MarshalJSON() ([]byte, error) {
+
+	if !ns.Valid {
+		return []byte("null"), nil
+	}
+
+	return json.Marshal(ns.String)
+}
+
+// UnmarshalJSON transforms
+func (ns *NullString) UnmarshalJSON(b []byte) error {
+
+	ns.String = ""
+	ns.Valid = false
+
+	if bytes.Equal(b, []byte("null")) {
+		return nil
+	}
+
+	if len(b) >= 0 {
+
+		// Try to extract the 'string'. If this failed we simply
+		// use the base value as string.
+		if err := json.Unmarshal(b, &ns.String); err != nil {
+			ns.String = string(b)
+		}
+
+		ns.Valid = true
+	}
+
+	return nil
+}
+
 // NewNullString returns a new NullString and ignores any errors.
 func NewNullString(i interface{}) NullString {
 	n, _ := TryNullString(i)
@@ -83,58 +156,5 @@ func (ns *NullString) TrySet(i interface{}) error {
 
 	ns.String = val
 	ns.Valid = true
-	return nil
-}
-
-// IsTrimmed returns whether the given string is trimmed. Returns true if the string is invalid
-func (ns NullString) IsTrimmed() bool {
-	return !ns.Valid || ns.String == strings.TrimSpace(ns.String)
-}
-
-// IsEmpty checks whether this NullString contains any data
-func (ns NullString) IsEmpty() bool {
-	return !ns.Valid || len(strings.TrimSpace(ns.String)) == 0
-}
-
-// ToValue transform the current value into nil or string
-func (ns NullString) ToValue() interface{} {
-	if !ns.Valid {
-		return nil
-	}
-
-	return ns.String
-}
-
-// MarshalJSON transforms the current string in either "null" or a byte representation of the string
-func (ns NullString) MarshalJSON() ([]byte, error) {
-
-	if !ns.Valid {
-		return []byte("null"), nil
-	}
-
-	return json.Marshal(ns.String)
-}
-
-// UnmarshalJSON transforms
-func (ns *NullString) UnmarshalJSON(b []byte) error {
-
-	ns.String = ""
-	ns.Valid = false
-
-	if bytes.Equal(b, []byte("null")) {
-		return nil
-	}
-
-	if len(b) >= 0 {
-
-		// Try to extract the 'string'. If this failed we simply
-		// use the base value as string.
-		if err := json.Unmarshal(b, &ns.String); err != nil {
-			ns.String = string(b)
-		}
-
-		ns.Valid = true
-	}
-
 	return nil
 }

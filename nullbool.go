@@ -74,6 +74,26 @@ func (nb NullBool) ToValue() interface{} {
 	return nb.Bool
 }
 
+func (nb NullBool) Add(nt2 NullBool) NullBool {
+
+	val1 := false
+	if nb.Valid {
+		val1 = nb.Bool
+	}
+
+	val2 := false
+	if nt2.Valid {
+		val2 = nt2.Bool
+	}
+
+	return NullBool{
+		NullBool: sql.NullBool{
+			Valid: nb.Valid || nt2.Valid,
+			Bool:  val1 || val2,
+		},
+	}
+}
+
 func (nb NullBool) MarshalJSON() ([]byte, error) {
 
 	if !nb.Valid {

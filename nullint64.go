@@ -12,6 +12,60 @@ type NullInt64 struct {
 	sql.NullInt64
 }
 
+func (ni NullInt64) ToValue() interface{} {
+	if !ni.Valid {
+		return nil
+	}
+
+	return ni.Int64
+}
+
+func (ni NullInt64) MarshalJSON() ([]byte, error) {
+
+	if !ni.Valid {
+		return []byte("null"), nil
+	}
+
+	return json.Marshal(ni.Int64)
+}
+
+func (ni *NullInt64) UnmarshalJSON(b []byte) error {
+	ni.Valid = false
+
+	if bytes.Equal(b, []byte("null")) {
+		return nil
+	}
+
+	if len(b) >= 0 {
+		if err := json.Unmarshal(b, &ni.Int64); err != nil {
+			return err
+		}
+		ni.Valid = true
+	}
+
+	return nil
+}
+
+func (ni NullInt64) Add(nt2 NullInt64) NullInt64 {
+
+	val1 := int64(0)
+	if ni.Valid {
+		val1 = ni.Int64
+	}
+
+	val2 := int64(0)
+	if nt2.Valid {
+		val2 = nt2.Int64
+	}
+
+	return NullInt64{
+		NullInt64: sql.NullInt64{
+			Valid: ni.Valid || nt2.Valid,
+			Int64: val1 + val2,
+		},
+	}
+}
+
 func NewNullInt64(s interface{}) NullInt64 {
 	n, _ := TryNullInt64(s)
 	return n
@@ -84,39 +138,5 @@ func (ni *NullInt64) TrySet(i interface{}) error {
 
 	ni.Int64 = val
 	ni.Valid = true
-	return nil
-}
-
-func (ni NullInt64) ToValue() interface{} {
-	if !ni.Valid {
-		return nil
-	}
-
-	return ni.Int64
-}
-
-func (ni NullInt64) MarshalJSON() ([]byte, error) {
-
-	if !ni.Valid {
-		return []byte("null"), nil
-	}
-
-	return json.Marshal(ni.Int64)
-}
-
-func (ni *NullInt64) UnmarshalJSON(b []byte) error {
-	ni.Valid = false
-
-	if bytes.Equal(b, []byte("null")) {
-		return nil
-	}
-
-	if len(b) >= 0 {
-		if err := json.Unmarshal(b, &ni.Int64); err != nil {
-			return err
-		}
-		ni.Valid = true
-	}
-
 	return nil
 }

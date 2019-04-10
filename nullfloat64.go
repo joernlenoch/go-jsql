@@ -12,6 +12,71 @@ type NullFloat64 struct {
 	sql.NullFloat64
 }
 
+func (nf NullFloat64) Add(nt2 NullFloat64) NullFloat64 {
+
+	val1 := float64(0)
+	if nf.Valid {
+		val1 = nf.Float64
+	}
+
+	val2 := float64(0)
+	if nt2.Valid {
+		val2 = nt2.Float64
+	}
+
+	return NullFloat64{
+		NullFloat64: sql.NullFloat64{
+			Valid:   nf.Valid || nt2.Valid,
+			Float64: val1 + val2,
+		},
+	}
+}
+
+func (nf NullFloat64) ToValue() interface{} {
+	if !nf.Valid {
+		return nil
+	}
+
+	return nf.Float64
+}
+
+func (nf NullFloat64) MarshalJSON() ([]byte, error) {
+
+	if !nf.Valid {
+		return []byte("null"), nil
+	}
+
+	return json.Marshal(nf.Float64)
+}
+
+func (nf *NullFloat64) UnmarshalJSON(b []byte) error {
+	nf.Valid = false
+
+	if bytes.Equal(b, []byte("null")) {
+		return nil
+	}
+
+	if len(b) >= 0 {
+		// Try to unmarshal as float first, if it fails, try
+		// to use a string and convert it
+		if err := json.Unmarshal(b, &nf.Float64); err != nil {
+
+			var str string
+			if err := json.Unmarshal(b, &str); err != nil {
+				return err
+			}
+
+			nf.Float64, err = strconv.ParseFloat(str, 64)
+			if err != nil {
+				return err
+			}
+		}
+		nf.Valid = true
+	}
+
+	return nil
+}
+
 // Create a new NullFloat64 value.
 // Invalid values will result in having an invalid NullFloat64.
 func NewNullFloat64(i interface{}) NullFloat64 {
@@ -87,51 +152,6 @@ func (nf *NullFloat64) TrySet(i interface{}) error {
 
 	nf.Valid = true
 	nf.Float64 = val
-
-	return nil
-}
-
-func (nf NullFloat64) ToValue() interface{} {
-	if !nf.Valid {
-		return nil
-	}
-
-	return nf.Float64
-}
-
-func (nf NullFloat64) MarshalJSON() ([]byte, error) {
-
-	if !nf.Valid {
-		return []byte("null"), nil
-	}
-
-	return json.Marshal(nf.Float64)
-}
-
-func (nf *NullFloat64) UnmarshalJSON(b []byte) error {
-	nf.Valid = false
-
-	if bytes.Equal(b, []byte("null")) {
-		return nil
-	}
-
-	if len(b) >= 0 {
-		// Try to unmarshal as float first, if it fails, try
-		// to use a string and convert it
-		if err := json.Unmarshal(b, &nf.Float64); err != nil {
-
-			var str string
-			if err := json.Unmarshal(b, &str); err != nil {
-				return err
-			}
-
-			nf.Float64, err = strconv.ParseFloat(str, 64)
-			if err != nil {
-				return err
-			}
-		}
-		nf.Valid = true
-	}
 
 	return nil
 }
