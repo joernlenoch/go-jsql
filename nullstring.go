@@ -146,7 +146,12 @@ func (ns *NullString) TrySet(i interface{}) error {
 	case []byte:
 		val = string(i.([]byte))
 	default:
-		err = errors.New(fmt.Sprintf("given value '%s' is not en explicit string: please cast it to ensure that this behaviour is expected", i))
+    // As last resort, check if the type might be just a string subtype
+    if fmt.Sprintf("%v", i) == fmt.Sprintf("%s", i) {
+      val = fmt.Sprintf("%s", i)
+    } else {
+      err = errors.New(fmt.Sprintf("given value '%s' is not en explicit string: please cast it to ensure that this behaviour is expected", i))
+    }
 	}
 
 	if err != nil {
