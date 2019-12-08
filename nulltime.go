@@ -25,6 +25,7 @@ func (nt *NullTime) Set(i interface{}) {
 
 func (nt *NullTime) TrySet(i interface{}) error {
 	if i == nil {
+		nt.Time = time.Time{}
 		nt.Valid = false
 		return nil
 	}
@@ -50,6 +51,7 @@ func (nt *NullTime) TrySet(i interface{}) error {
 		return nil
 	}
 
+	nt.Time = time.Time{}
 	nt.Valid = false
 	return fmt.Errorf("expected time value, got: %T", i)
 }

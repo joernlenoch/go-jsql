@@ -31,6 +31,7 @@ func (nb *NullBool) Set(i interface{}) {
 func (nb *NullBool) TrySet(i interface{}) error {
 
 	if i == nil {
+		nb.Bool = false
 		nb.Valid = false
 		return nil
 	}
@@ -57,6 +58,7 @@ func (nb *NullBool) TrySet(i interface{}) error {
 	}
 
 	if err != nil {
+		nb.Bool = false
 		nb.Valid = false
 		return err
 	}
@@ -104,6 +106,7 @@ func (nb NullBool) MarshalJSON() ([]byte, error) {
 }
 
 func (nb *NullBool) UnmarshalJSON(b []byte) error {
+	nb.Bool = false
 	nb.Valid = false
 
 	if bytes.Equal(b, []byte("null")) {

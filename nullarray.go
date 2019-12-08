@@ -33,6 +33,7 @@ func (na *NullArray) Set(i interface{}) {
 func (na *NullArray) TrySet(i interface{}) error {
 
 	if i == nil {
+		na.Array = nil
 		na.Valid = false
 		return nil
 	}
@@ -51,6 +52,7 @@ func (na *NullArray) TrySet(i interface{}) error {
 	raw := reflect.ValueOf(i)
 
 	if raw.Kind() != reflect.Slice {
+		na.Array = nil
 		na.Valid = false
 		return fmt.Errorf("expected a slice, got a %v", raw.Kind())
 	}
@@ -129,6 +131,7 @@ func (na NullArray) MarshalJSON() ([]byte, error) {
 }
 
 func (na *NullArray) UnmarshalJSON(b []byte) error {
+	na.Array = nil
 	na.Valid = false
 
 	if bytes.Equal(b, []byte("null")) {
@@ -147,6 +150,7 @@ func (na *NullArray) UnmarshalJSON(b []byte) error {
 
 // Retrieve value as JSON data
 func (na *NullArray) Scan(value interface{}) error {
+	na.Array = nil
 	na.Valid = false
 
 	if value == nil {

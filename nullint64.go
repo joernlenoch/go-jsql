@@ -30,6 +30,7 @@ func (ni NullInt64) MarshalJSON() ([]byte, error) {
 }
 
 func (ni *NullInt64) UnmarshalJSON(b []byte) error {
+	ni.Int64 = 0
 	ni.Valid = false
 
 	if bytes.Equal(b, []byte("null")) {
@@ -84,6 +85,7 @@ func (ni *NullInt64) Set(i interface{}) {
 func (ni *NullInt64) TrySet(i interface{}) error {
 
 	if i == nil {
+		ni.Int64 = 0
 		ni.Valid = false
 		return nil
 	}
@@ -132,6 +134,7 @@ func (ni *NullInt64) TrySet(i interface{}) error {
 	}
 
 	if err != nil {
+		ni.Int64 = 0
 		ni.Valid = false
 		return err
 	}
