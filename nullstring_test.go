@@ -151,4 +151,19 @@ func TestNullString_TrySet(t *testing.T) {
 	assert.NoError(t, ns2.TrySet(&ns1))
 	assert.True(t, ns2.Valid)
 	assert.Equal(t, "test_pointer", ns2.String)
+
+	// Test normal
+	assert.NoError(t, ns1.TrySet("abc"))
+	assert.True(t, ns1.Valid)
+	assert.Equal(t, "abc", ns1.String)
+
+	// Test normal
+	assert.Error(t, ns1.TrySet([]interface{}{"abc"}))
+	assert.False(t, ns1.Valid)
+	assert.Equal(t, "", ns1.String)
+
+	// Test normal
+	assert.NoError(t, ns1.TrySet(nil))
+	assert.False(t, ns1.Valid)
+	assert.Equal(t, "", ns1.String)
 }
