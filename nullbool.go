@@ -1,12 +1,11 @@
 package jsql
 
 import (
-	"bytes"
-	"database/sql"
-	"encoding/json"
-	"fmt"
-	"reflect"
-	"strconv"
+  "bytes"
+  "database/sql"
+  "encoding/json"
+  "fmt"
+  "strconv"
 )
 
 type NullBool struct {
@@ -31,7 +30,7 @@ func (nb *NullBool) Set(i interface{}) {
 
 func (nb *NullBool) TrySet(i interface{}) error {
 
-	if i == nil || (reflect.ValueOf(i).Kind() == reflect.Ptr && reflect.ValueOf(i).IsNil()) {
+	if IsNil(i) {
 		nb.Bool = false
 		nb.Valid = false
 		return nil

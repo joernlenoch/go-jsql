@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"log"
-	"reflect"
 	"time"
 )
 
@@ -26,7 +25,7 @@ func (nt *NullTime) Set(i interface{}) {
 
 func (nt *NullTime) TrySet(i interface{}) error {
 
-	if i == nil || (reflect.ValueOf(i).Kind() == reflect.Ptr && reflect.ValueOf(i).IsNil()) {
+	if IsNil(i) {
 		nt.Time = time.Time{}
 		nt.Valid = false
 		return nil

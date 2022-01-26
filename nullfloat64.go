@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strconv"
 )
 
@@ -99,7 +98,7 @@ func (nf *NullFloat64) Set(i interface{}) {
 
 func (nf *NullFloat64) TrySet(i interface{}) error {
 
-	if i == nil || (reflect.ValueOf(i).Kind() == reflect.Ptr && reflect.ValueOf(i).IsNil()) {
+	if IsNil(i) {
 		nf.Float64 = 0
 		nf.Valid = false
 		return nil

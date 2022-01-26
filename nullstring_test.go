@@ -2,6 +2,7 @@ package jsql_test
 
 import (
 	"encoding/json"
+	"github.com/joernlenoch/go-jsql"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

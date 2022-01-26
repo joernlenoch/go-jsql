@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strconv"
 )
 
@@ -85,7 +84,7 @@ func (ni *NullInt64) Set(i interface{}) {
 
 func (ni *NullInt64) TrySet(i interface{}) error {
 
-	if i == nil || (reflect.ValueOf(i).Kind() == reflect.Ptr && reflect.ValueOf(i).IsNil()) {
+	if IsNil(i) {
 		ni.Int64 = 0
 		ni.Valid = false
 		return nil

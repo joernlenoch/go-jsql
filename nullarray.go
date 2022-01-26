@@ -32,7 +32,7 @@ func (na *NullArray) Set(i interface{}) {
 
 func (na *NullArray) TrySet(i interface{}) error {
 
-	if i == nil {
+	if IsNil(i) {
 		na.Array = nil
 		na.Valid = false
 		return nil
