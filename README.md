@@ -1,20 +1,8 @@
 
 ## JSQL (Json Sql)
 
-Version 0.7.0
+Basic toolset to provide easier integration between sql and json elements.
 
 ## Note
 
-In production use with 3 of my larger projects. Seems to work very reliable so far. -len
-
-## Types
-
-TBD
-
-## Testing
-
-TBD
-
-## Dependencies
-
-TBD
+In production use with 3 of my larger projects. Works very reliable so far. -len

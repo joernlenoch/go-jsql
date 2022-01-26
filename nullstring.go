@@ -121,7 +121,7 @@ func (ns *NullString) Set(i interface{}) {
 // TrySet tries to update the objects value
 func (ns *NullString) TrySet(i interface{}) error {
 
-	if i == nil {
+	if i == nil || (reflect.ValueOf(i).Kind() == reflect.Ptr && reflect.ValueOf(i).IsNil()) {
 		ns.String = ""
 		ns.Valid = false
 		return nil

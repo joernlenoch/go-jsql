@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
-
-	"github.com/joernlenoch/go-jsql"
 )
 
 func TestNullString_UnmarshalJSON(t *testing.T) {
@@ -82,6 +80,15 @@ func TestNullString_MarshalJSON_Invalid(t *testing.T) {
 	s := jsql.NewNullString(nil)
 
 	data, _ := s.MarshalJSON()
+	if string(data) != "null" {
+		t.Fail()
+	}
+
+	var b []byte
+	b = nil
+	s = jsql.NewNullString(b)
+
+	data, _ = s.MarshalJSON()
 	if string(data) != "null" {
 		t.Fail()
 	}
