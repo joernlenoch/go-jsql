@@ -79,7 +79,7 @@ func (ns *NullString) UnmarshalJSON(b []byte) error {
 		// Try to extract the 'string'. If this failed we simply
 		// use the base value as string.
 		if err := json.Unmarshal(b, &ns.String); err != nil {
-			ns.String = string(b)
+			return err
 		}
 
 		ns.Valid = true

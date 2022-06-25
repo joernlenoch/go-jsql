@@ -175,3 +175,12 @@ func TestNullString_TrySet(t *testing.T) {
 	assert.False(t, ns1.Valid)
 	assert.Equal(t, "", ns1.String)
 }
+
+func TestNullString_Unmarshal(t *testing.T) {
+	ns1 := jsql.NullString{}
+	assert.Error(t, json.Unmarshal([]byte("2"), &ns1))
+
+	ns2 := jsql.NullString{}
+	assert.NoError(t, json.Unmarshal([]byte(`"2"`), &ns2))
+	assert.EqualValues(t, "2", ns2.String)
+}
